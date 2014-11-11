@@ -1,0 +1,2 @@
+- name: copy /etc/ceph/ceph.client.admin.keyring
+  copy: src=fetch/{{fsid}}/etc/ceph/ceph.client.admin.keyring dest=/etc/ceph/
