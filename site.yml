@@ -29,3 +29,9 @@
   sudo: True
   roles:
   - ceph-radosgw
+
+- hosts: clients
+  sudo: True
+  roles:
+  - ceph-common
+  - ceph-client

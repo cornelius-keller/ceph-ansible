@@ -16,7 +16,8 @@ ansible_provision = proc do |ansible|
     'mons' => (0..NMONS - 1).map { |j| "mon#{j}" },
     'osds' => (0..NOSDS - 1).map { |j| "osd#{j}" },
     'mdss' => [],
-    'rgws' => ['rgw']
+    'rgws' => ['rgw'],
+    'clients' => ['client']
   }
 
   # In a production deployment, these should be secret
@@ -34,7 +35,7 @@ def create_vmdk(name, size)
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = 'hashicorp/precise64'
+  config.vm.box = 'ubuntu/trusty64'
 
   (0..NRGWS - 1).each do |i|
     config.vm.define :rgw do |rgw|
@@ -70,7 +71,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       osd.vm.provider :virtualbox do |vb|
         (0..1).each do |d|
           vb.customize ['createhd', '--filename', "disk-#{i}-#{d}", '--size', '11000']
-          vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 3 + d, '--device', 0, '--type', 'hdd', '--medium', "disk-#{i}-#{d}.vdi"]
+          vb.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', 3 + d, '--device', 0, '--type', 'hdd', '--medium', "disk-#{i}-#{d}.vdi"]
         end
         vb.customize ['modifyvm', :id, '--memory', '192']
       end
@@ -86,4 +87,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       osd.vm.provision 'ansible', &ansible_provision if i == (NOSDS - 1)
     end
   end
+  config.vm.define "client" do |client|
+    client.vm.hostname = "client"
+    client.vm.network :private_network, ip: "192.168.42.40"
+    client.vm.network :private_network, ip: "192.168.42.40"
+    client.vm.provider :virtualbox do |vb|
+      vb.customize ['modifyvm', :id, '--memory', '192']
+    end
+    client.vm.provider :vmware_fusion do |v|
+      v.vmx['memsize'] = '192'
+    end
+  end
+
+
 end
