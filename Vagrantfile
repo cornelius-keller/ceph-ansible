@@ -63,6 +63,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+  config.vm.define "client" do |client|
+    client.vm.hostname = "client"
+    client.vm.network :private_network, ip: "192.168.42.40"
+    client.vm.provider :virtualbox do |vb|
+      vb.customize ['modifyvm', :id, '--memory', '192']
+    end
+    client.vm.provider :vmware_fusion do |v|
+      v.vmx['memsize'] = '192'
+    end
+  end
+
   (0..NOSDS - 1).each do |i|
     config.vm.define "osd#{i}" do |osd|
       osd.vm.hostname = "ceph-osd#{i}"
@@ -87,17 +98,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       osd.vm.provision 'ansible', &ansible_provision if i == (NOSDS - 1)
     end
   end
-  config.vm.define "client" do |client|
-    client.vm.hostname = "client"
-    client.vm.network :private_network, ip: "192.168.42.40"
-    client.vm.network :private_network, ip: "192.168.42.40"
-    client.vm.provider :virtualbox do |vb|
-      vb.customize ['modifyvm', :id, '--memory', '192']
-    end
-    client.vm.provider :vmware_fusion do |v|
-      v.vmx['memsize'] = '192'
-    end
-  end
+
 
 
 end
