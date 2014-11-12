@@ -45,8 +45,8 @@ mon_osd_report_timeout: 300
 ## OSD options
 #
 journal_size: 100
-pool_default_pg_num: 128
-pool_default_pgp_num: 128
+pool_default_pg_num: 512
+pool_default_pgp_num: 512
 pool_default_size: 2
 pool_default_min_size: 1
 cluster_network: 192.168.42.0/24
