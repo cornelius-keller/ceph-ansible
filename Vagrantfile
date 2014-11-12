@@ -101,7 +101,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                         '--filename', "disk-#{i}-#{d}",
                         '--size', '11000']
           vb.customize ['storageattach', :id,
-                        '--storagectl', 'SATA Controller',
+                        '--storagectl', 'SATAController',
                         '--port', 3 + d,
                         '--device', 0,
                         '--type', 'hdd',
